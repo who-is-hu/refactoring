@@ -16,11 +16,14 @@ public class StudyDashboard {
 
     private Set<String> reviews = new HashSet<>();
 
-    private void studyReviews(GHIssue issue) throws IOException {
-        List<GHIssueComment> comments = issue.getComments();
-        for (GHIssueComment comment : comments) {
-            usernames.add(comment.getUserName());
-            reviews.add(comment.getBody());
+    /*
+    * 깃헙 이슈에 달린 리뷰 목록을 불러옵니다.
+    * */
+    private void loadReviews(GHIssue issue) throws IOException {
+        List<GHIssueComment> reviews = issue.getComments();
+        for (GHIssueComment review : reviews) {
+            usernames.add(review.getUserName());
+            this.reviews.add(review.getBody());
         }
     }
 
@@ -38,7 +41,7 @@ public class StudyDashboard {
         GHIssue issue = repository.getIssue(30);
 
         StudyDashboard studyDashboard = new StudyDashboard();
-        studyDashboard.studyReviews(issue);
+        studyDashboard.loadReviews(issue);
         studyDashboard.getUsernames().forEach(System.out::println);
         studyDashboard.getReviews().forEach(System.out::println);
     }
