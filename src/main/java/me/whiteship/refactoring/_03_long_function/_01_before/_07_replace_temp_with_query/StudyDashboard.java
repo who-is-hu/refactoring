@@ -1,4 +1,4 @@
-package me.whiteship.refactoring._03_long_function._07_replace_temp_with_query;
+package me.whiteship.refactoring._03_long_function._01_before._07_replace_temp_with_query;
 
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueComment;
@@ -72,15 +72,24 @@ public class StudyDashboard {
             writer.print(header(totalNumberOfEvents, participants.size()));
 
             participants.forEach(p -> {
-                long count = p.homework().values().stream()
-                        .filter(v -> v == true)
-                        .count();
-                double rate = count * 100 / totalNumberOfEvents;
-
-                String markdownForHomework = String.format("| %s %s | %.2f%% |\n", p.username(), checkMark(p, totalNumberOfEvents), rate);
+                // double rate = getRate(totalNumberOfEvents, p); 같은 매개변수가 markdown에도 들어가 있음
+                String markdownForHomework = getMarkdown(totalNumberOfEvents, p);
                 writer.print(markdownForHomework);
             });
         }
+    }
+
+    private double getRate(int totalNumberOfEvents, Participant p) {
+        long count = p.homework().values().stream()
+                .filter(v -> v == true)
+                .count();
+        double rate = count * 100 / totalNumberOfEvents;
+        return rate;
+    }
+
+    private String getMarkdown(int totalNumberOfEvents, Participant p) {
+        String markdownForHomework = String.format("| %s %s | %.2f%% |\n", p.username(), checkMark(p, totalNumberOfEvents), getRate(totalNumberOfEvents, p));
+        return markdownForHomework;
     }
 
     /**

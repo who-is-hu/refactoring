@@ -32,10 +32,13 @@ public class StudyDashboard {
     }
 
     private void print() throws IOException, InterruptedException {
-        GHRepository ghRepository = getGhRepository();
+        checkGithubIssues(getGhRepository());
+        new StudyPrinter(this.totalNumberOfEvents, this.participants).execute();
+    }
 
+    private void checkGithubIssues(GHRepository ghRepository) throws InterruptedException {
         ExecutorService service = Executors.newFixedThreadPool(8);
-        CountDownLatch latch = new CountDownLatch(totalNumberOfEvents);
+        CountDownLatch latch = new CountDownLatch(totalNumberOfEvents); // 풀엔 8개지만 15번 작업해야해서 기다려주는 것
 
         for (int index = 1 ; index <= totalNumberOfEvents ; index++) {
             int eventId = index;
@@ -45,20 +48,10 @@ public class StudyDashboard {
                     try {
                         GHIssue issue = ghRepository.getIssue(eventId);
                         List<GHIssueComment> comments = issue.getComments();
-                        Date firstCreatedAt = null;
-                        Participant first = null;
 
-                        for (GHIssueComment comment : comments) {
-                            Participant participant = findParticipant(comment.getUserName(), participants);
-                            participant.setHomeworkDone(eventId);
+                        checkHomeWork(comments, eventId);
+                        firstParticipantsForEachEvent[eventId - 1] = findFirstSubmitParticipant(comments);
 
-                            if (firstCreatedAt == null || comment.getCreatedAt().before(firstCreatedAt)) {
-                                firstCreatedAt = comment.getCreatedAt();
-                                first = participant;
-                            }
-                        }
-
-                        firstParticipantsForEachEvent[eventId - 1] = first;
                         latch.countDown();
                     } catch (IOException e) {
                         throw new IllegalArgumentException(e);
@@ -66,12 +59,30 @@ public class StudyDashboard {
                 }
             });
         }
+        printFirstParticipants();
 
         latch.await();
         service.shutdown();
+    }
 
-        new StudyPrinter(this.totalNumberOfEvents, this.participants).execute();
-        printFirstParticipants();
+    private Participant findFirstSubmitParticipant(List<GHIssueComment> comments) throws IOException {
+        Date firstCreatedAt = null;
+        Participant first = null;
+        for (GHIssueComment comment : comments) {
+            Participant participant = findParticipant(comment.getUserName());
+            if (firstCreatedAt == null || comment.getCreatedAt().before(firstCreatedAt)) {
+                firstCreatedAt = comment.getCreatedAt();
+                first = participant;
+            }
+        }
+        return first;
+    }
+
+    private void checkHomeWork(List<GHIssueComment> comments, int eventId) {
+        for (GHIssueComment comment : comments) {
+            Participant participant = findParticipant(comment.getUserName());
+            participant.setHomeworkDone(eventId);
+        }
     }
 
     private void printFirstParticipants() {
@@ -84,26 +95,26 @@ public class StudyDashboard {
         return repository;
     }
 
-    private Participant findParticipant(String username, List<Participant> participants) {
-        return isNewParticipant(username, participants) ?
-                createNewParticipant(username, participants) :
-                findExistingParticipant(username, participants);
+    private Participant findParticipant(String username) {
+        return isNewParticipant(username) ?
+                createNewParticipant(username) :
+                findExistingParticipant(username);
     }
 
-    private Participant findExistingParticipant(String username, List<Participant> participants) {
+    private Participant findExistingParticipant(String username) {
         Participant participant;
         participant = participants.stream().filter(p -> p.username().equals(username)).findFirst().orElseThrow();
         return participant;
     }
 
-    private Participant createNewParticipant(String username, List<Participant> participants) {
+    private Participant createNewParticipant(String username) {
         Participant participant;
         participant = new Participant(username);
         participants.add(participant);
         return participant;
     }
 
-    private boolean isNewParticipant(String username, List<Participant> participants) {
+    private boolean isNewParticipant(String username) {
         return participants.stream().noneMatch(p -> p.username().equals(username));
     }
 

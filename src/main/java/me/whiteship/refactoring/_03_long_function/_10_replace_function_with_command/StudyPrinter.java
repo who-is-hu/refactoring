@@ -1,16 +1,16 @@
-package me.whiteship.refactoring._03_long_function._11_decompose_conditional;
+package me.whiteship.refactoring._03_long_function._10_replace_function_with_command;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Comparator;
+import java.util.List;
 
 public class StudyPrinter {
-
     private int totalNumberOfEvents;
-    private Participants participants;
+    private List<Participant> participants;
 
-    public StudyPrinter(int totalNumberOfEvents, Participants participants) {
+    public StudyPrinter(int totalNumberOfEvents, List<Participant> participants) {
         this.totalNumberOfEvents = totalNumberOfEvents;
         this.participants = participants;
     }
@@ -18,11 +18,11 @@ public class StudyPrinter {
     public void execute() throws IOException {
         try (FileWriter fileWriter = new FileWriter("participants.md");
              PrintWriter writer = new PrintWriter(fileWriter)) {
-            this.participants.sort(Comparator.comparing(Participant::username));
+            participants.sort(Comparator.comparing(Participant::username));
 
-            writer.print(header(this.participants.size()));
+            writer.print(header(participants.size()));
 
-            this.participants.forEach(p -> {
+            participants.forEach(p -> {
                 String markdownForHomework = getMarkdownForParticipant(p);
                 writer.print(markdownForHomework);
             });
@@ -30,7 +30,7 @@ public class StudyPrinter {
     }
 
     private String getMarkdownForParticipant(Participant p) {
-        return String.format("| %s %s | %.2f%% |\n", p.username(), checkMark(p, this.totalNumberOfEvents),
+        return String.format("| %s %s | %.2f%% |\n", p.username(), checkMark(p),
                 p.getRate(this.totalNumberOfEvents));
     }
 
@@ -55,9 +55,9 @@ public class StudyPrinter {
     /**
      * |:white_check_mark:|:white_check_mark:|:white_check_mark:|:x:|
      */
-    private String checkMark(Participant p, int totalEvents) {
+    private String checkMark(Participant p) {
         StringBuilder line = new StringBuilder();
-        for (int i = 1 ; i <= totalEvents ; i++) {
+        for (int i = 1 ; i <= this.totalNumberOfEvents ; i++) {
             if(p.homework().containsKey(i) && p.homework().get(i)) {
                 line.append("|:white_check_mark:");
             } else {
