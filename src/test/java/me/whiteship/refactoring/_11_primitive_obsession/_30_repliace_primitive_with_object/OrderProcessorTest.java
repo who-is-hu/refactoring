@@ -12,11 +12,19 @@ class OrderProcessorTest {
     void numberOfHighPriorityOrders() {
         OrderProcessor orderProcessor = new OrderProcessor();
         long highPriorityOrders = orderProcessor.numberOfHighPriorityOrders(
-                List.of(new Order("low"),
-                        new Order("normal"),
-                        new Order("high"),
-                        new Order("rush")));
+                List.of(new Order(Priority.LOW),
+                        new Order(Priority.NORMAL),
+                        new Order(Priority.HIGH),
+                        new Order(Priority.RUSH)));
         assertEquals(2, highPriorityOrders);
+    }
+
+    @Test
+    void compareTest() {
+        Priority higher = Priority.RUSH;
+        Priority lower = Priority.LOW;
+        assertEquals(true, higher.isImportantThan(lower));
+        assertEquals(false, lower.isImportantThan(higher));
     }
 
 }

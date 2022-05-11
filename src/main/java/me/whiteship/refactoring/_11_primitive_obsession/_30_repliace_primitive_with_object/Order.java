@@ -2,13 +2,13 @@ package me.whiteship.refactoring._11_primitive_obsession._30_repliace_primitive_
 
 public class Order {
 
-    private String priority;
+    private Priority priority;
 
-    public Order(String priority) {
+    public Order(Priority priority) {
         this.priority = priority;
     }
 
-    public String getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 }
