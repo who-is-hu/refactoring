@@ -4,33 +4,30 @@ public class Office {
 
     private String location;
 
-    private String officeAreCode;
+    private PhoneNumber phoneNumber;
 
-    private String officeNumber;
-
-    public Office(String location, String officeAreCode, String officeNumber) {
+    public Office(String location, PhoneNumber phoneNumber) {
         this.location = location;
-        this.officeAreCode = officeAreCode;
-        this.officeNumber = officeNumber;
+        this.phoneNumber = phoneNumber;
     }
 
     public String officePhoneNumber() {
-        return officeAreCode + "-" + officeNumber;
+        return this.phoneNumber.toString();
     }
 
     public String getOfficeAreCode() {
-        return officeAreCode;
+        return this.phoneNumber.getAreaCode();
     }
 
     public void setOfficeAreCode(String officeAreCode) {
-        this.officeAreCode = officeAreCode;
+        this.phoneNumber.setAreaCode(officeAreCode);
     }
 
     public String getOfficeNumber() {
-        return officeNumber;
+        return this.phoneNumber.getNumber();
     }
 
     public void setOfficeNumber(String officeNumber) {
-        this.officeNumber = officeNumber;
+        this.phoneNumber.setNumber(officeNumber);
     }
 }
