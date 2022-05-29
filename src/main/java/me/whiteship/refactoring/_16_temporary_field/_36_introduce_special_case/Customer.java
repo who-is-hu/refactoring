@@ -37,4 +37,10 @@ public class Customer {
     public void setPaymentHistory(PaymentHistory paymentHistory) {
         this.paymentHistory = paymentHistory;
     }
+
+    boolean isUnknown() {
+        return this.getName().equals("unknown");
+    }
+
+    public static Customer UNKNOWN = new Customer("occupant", new BasicBillingPlan(), PaymentHistory.NULL);
 }

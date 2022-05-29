@@ -11,4 +11,6 @@ public class PaymentHistory {
     public int getWeeksDelinquentInLastYear() {
         return this.weeksDelinquentInLastYear;
     }
+
+    public static PaymentHistory NULL = new PaymentHistory(0);
 }

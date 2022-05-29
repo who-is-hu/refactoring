@@ -9,6 +9,6 @@ public class Site {
     }
 
     public Customer getCustomer() {
-        return customer;
+        return this.customer.isUnknown()? this.customer.UNKNOWN : this.customer;
     }
 }
