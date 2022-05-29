@@ -4,18 +4,12 @@ import java.time.LocalDateTime;
 
 public class Reservation {
 
-    private String title;
-
     private LocalDateTime from;
-
-    private LocalDateTime to;
 
     private LocalDateTime alarm;
 
-    public Reservation(String title, LocalDateTime from, LocalDateTime to) {
-        this.title = title;
+    public Reservation(LocalDateTime from) {
         this.from = from;
-        this.to = to;
     }
 
     public void setAlarmBefore(int minutes) {
