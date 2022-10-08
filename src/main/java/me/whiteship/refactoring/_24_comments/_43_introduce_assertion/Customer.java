@@ -13,6 +13,7 @@ public class Customer {
     }
 
     public void setDiscountRate(Double discountRate) {
+        assert discountRate != null && discountRate > 0; // test 에서는 통과못하면 AssertionError 를 내줌( ea 가 켜져있어서 )
         this.discountRate = discountRate;
     }
 }
